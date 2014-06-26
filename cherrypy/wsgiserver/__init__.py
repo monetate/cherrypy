@@ -1283,12 +1283,12 @@ class ThreadPool(object):
     and stop(timeout) attributes.
     """
     
-    def __init__(self, server, min=10, max=-1):
+    def __init__(self, server, min=10, max=-1, max_queue_size=-1):
         self.server = server
         self.min = min
         self.max = max
         self._threads = []
-        self._queue = Queue.Queue()
+        self._queue = Queue.Queue(max_queue_size)
         self.get = self._queue.get
     
     def start(self):
@@ -1482,8 +1482,8 @@ class CherryPyWSGIServer(object):
     ssl_private_key = None
     
     def __init__(self, bind_addr, wsgi_app, numthreads=10, server_name=None,
-                 max=-1, request_queue_size=5, timeout=10, shutdown_timeout=5):
-        self.requests = ThreadPool(self, min=numthreads or 1, max=max)
+                 max=-1, request_queue_size=5, timeout=10, shutdown_timeout=5, max_queue_size=-1):
+        self.requests = ThreadPool(self, min=numthreads or 1, max=max, max_queue_size=max_queue_size)
         
         if callable(wsgi_app):
             # We've been handed a single wsgi_app, in CP-2.1 style.
