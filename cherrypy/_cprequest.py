@@ -839,7 +839,7 @@ class Response(object):
         # bypass HeaderMap.update and get a big speed boost.
         dict.update(self.headers, {
             "Content-Type": 'text/html',
-            "Server": "CherryPy/" + cherrypy.__version__,
+            "Server": "Monetate", # CherryPy/" + cherrypy.__version__,
             "Date": http.HTTPDate(self.time),
         })
         self.cookie = Cookie.SimpleCookie()
