@@ -11,7 +11,7 @@ http://www.nedbatchelder.com/code/modules/coverage.html
 To turn on coverage tracing, use the following code:
 
     cherrypy.engine.subscribe('start', covercp.start)
-    cherrypy.engine.subscribe('start_thread', covercp.start)
+    cherrypy.engine.subscribe('exit', covercp.exit)
 
 Run your code, then use the covercp.serve() function to browse the
 results in a web browser. If you run this module from the command line,
@@ -30,10 +30,19 @@ try:
 except ImportError:
     import StringIO
 
+the_coverage = None
 try:
-    from coverage import the_coverage as coverage
-    def start(threadid=None):
-        coverage.start()
+    from coverage import coverage
+    #the_coverage = coverage(data_file=localFile, branch=True)
+    the_coverage = coverage(data_file=localFile)
+    def start(*args):
+        print "Starting coverage with file %s" % localFile
+        the_coverage.start()
+    def stop():
+        print "Saving coverage"
+        the_coverage.stop()
+	the_coverage.save()
+
 except ImportError:
     # Setting coverage to None will raise errors
     # that need to be trapped downstream.
@@ -43,6 +52,8 @@ except ImportError:
     warnings.warn("No code coverage will be performed; coverage.py could not be imported.")
     
     def start(threadid=None):
+        pass
+    def stop():
         pass
 start.priority = 20
 
@@ -344,7 +355,7 @@ class CoverStats(object):
     report.exposed = True
 
 
-def serve(path=localFile, port=8080):
+def serve(path=localFile, port=9080):
     if coverage is None:
         raise ImportError("The coverage module could not be imported.")
     coverage.cache_default = path
