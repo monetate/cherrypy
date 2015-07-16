@@ -150,8 +150,8 @@ def proxy(base=None, local='X-Forwarded-Host', remote='X-Forwarded-For',
         xff = request.headers.get(remote)
         if xff:
             if remote == 'X-Forwarded-For':
-                # See http://bob.pythonmac.org/archives/2005/09/23/apache-x-forwarded-for-caveat/
-                xff = xff.split(',')[-1].strip()
+                # See https://en.wikipedia.org/wiki/X-Forwarded-For
+                xff = xff.split(',')[0].strip()
             request.remote.ip = xff
 
 
